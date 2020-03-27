@@ -4,8 +4,9 @@ const add = document.getElementById("add");
 const minus = document.getElementById("minus");
 const number = document.querySelector("span");
 
+number.innerText = 0;
+
 const countModifier = (count = 0, action) => {
-  console.log(count, action);
   switch (action.type) {
     case "ADD":
       return count + 1;
@@ -16,13 +17,23 @@ const countModifier = (count = 0, action) => {
   }
 };
 
+// 저장소 생성
 const countStore = createStore(countModifier);
 
-countStore.dispatch({ type: "ADD" }); // 1
-countStore.dispatch({ type: "ADD" }); // 2
-countStore.dispatch({ type: "ADD" }); // 3
-countStore.dispatch({ type: "ADD" }); // 4
-countStore.dispatch({ type: "ADD" }); // 5
-countStore.dispatch({ type: "MINUS" }); // 4
+// subscribe를 통해 state가 변경 될때마다 실행
+const onChange = () => {
+  const state = countStore.getState();
+  console.log("state", state);
+  number.innerText = state;
+};
+countStore.subscribe(onChange);
 
-console.log(countStore.getState());
+// 이벤트
+const handleAdd = () => {
+  countStore.dispatch({ type: "ADD" });
+};
+const handleMinus = () => {
+  countStore.dispatch({ type: "MINUS" });
+};
+add.addEventListener("click", handleAdd);
+minus.addEventListener("click", handleMinus);
